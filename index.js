@@ -1,66 +1,27 @@
 #!/usr/bin/env node
 
-var PathFormatter = require("./lib/helpers/PathFormatter.js"),
-	Processor = require("./lib/Processor.js"),
-	cli = require('./lib/CLI.js'),
+var cli = require('./lib/CLI.js'),
 	requireUncached = require('./lib/helpers/RequireUncached.js');
 	fs = require("fs"),
 	argv = require('optimist').argv,
-	_ = require("underscore"),
-	API = null,
+	hasOwnProperty = Object.prototype.hasOwnProperty,
+	api = null,
 	absurd = null,
 
-module.exports = absurd = function(path) {
-
-	API = require("./lib/API.js")();
-
-	var _path = PathFormatter(path),
-		_defaultOptions = {
-			combineSelectors: true,
-			minify: false
-		};
-
-	// --------------------------------------------------- compile
-	var compile = API.compile = function(callback, options) {
-		options = _.extend(_defaultOptions, options || {});
-		if(typeof _path == "function") {
-			_path(API);
-		} else {		
-			if(_path !== false) {
-				API.import(_path.source);
-			}
-		}
-		Processor(
-			API.getRules(),
-			_path.callback || callback || function() {},
-			options
-		);
-	}
-	// --------------------------------------------------- compile to file
-	var compileFile = API.compileFile = function(file, compileFileCallback, options) {
-		compile(function(err, css) {
-			try {
-				fs.writeFile(file, css, function (err) {
-					compileFileCallback(err, css);
-				});
-			} catch(err) {
-				compileFileCallback(err);
-			}
-		}, options);
-	}
-	// --------------------------------------------------- getPaths
-	var getPath = API.getPath = function() {
-		return _path;
-	}
-
-	return API;
-
+module.exports = absurd = function(func) {
+	api = require("./lib/API.js")();
+	if(typeof func == "function") {
+		func(api);
+	} else if(typeof func == "string") {
+		api.import(func);	
+	} 
+	return api;
 }
 
 // godlike
 process.on('uncaughtException', function (err) {
     console.log("Error packing", err);
 });
-
+ 
 // cli
-cli(argv, absurd);
+cli(argv, absurd); 

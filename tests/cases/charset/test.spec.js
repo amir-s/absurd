@@ -6,16 +6,16 @@ describe("Test case (charset)", function() {
 		Absurd(__dirname + '/code.js').compile(function(err, css) {
 			expect(err).toBe(null);
 			expect(css).toBeDefined();
-			expect(css).toBe('body {\n  width: 100%;\n}\n@charset: "UTF-8";\n');
+			expect(css).toBe('@charset: "UTF-8";body{width: 100%;}');
 			done();
-		});
+		}, { minify: true });
 	});
 
 	it("charset / json", function(done) {
 		Absurd(__dirname + '/code.json').compile(function(err, css) {
 			expect(err).toBe(null);
 			expect(css).toBeDefined();
-			expect(css).toBe('body {\n  width: 100%;\n}\np {\n  margin-top: 20px;\n}\n@charset: "UTF-8";\n');
+			expect(css).toBe('@charset: "UTF-8";\nbody {\n  width: 100%;\n}\np {\n  margin-top: 20px;\n}\n');
 			done();
 		});
 	});
@@ -47,7 +47,7 @@ describe("Test case (charset)", function() {
 		}).compile(function(err, css) {
 			expect(err).toBe(null);
 			expect(css).toBeDefined();
-			expect(css).toBe('body {\n  border-radius: 2px;\n}\nbody a {\n  font-size: 2em;\n}\n@charset: "UTF-8";\np {\n  margin: 2px;\n}\n@charset: "BLA-BLA";\n');
+			expect(css).toBe('@charset: "UTF-8";\n@charset: "BLA-BLA";\nbody {\n  border-radius: 2px;\n}\nbody a {\n  font-size: 2em;\n}\np {\n  margin: 2px;\n}\n');
 			done();
 		});
 	});
